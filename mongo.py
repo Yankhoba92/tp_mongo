@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import pymongo
 client = MongoClient('mongodb://localhost:27017/')
 
 
@@ -26,6 +27,24 @@ update = {"$inc": {"age": 1}}
 result = collection.update_many(query, update)
 print("Modified document count:", result.modified_count)
 
+# query = {"age": {"$gt": 25}}
+# result = collection.delete_many(query)
+# print("Deleted document count:", result.deleted_count)
+
+query = {
+    "$and": [
+        {"age": {"$gt": 25}},
+        {"email": {"$regex": "@example\.com$"}}
+    ]
+}
+documents = collection.find(query)
+
+for doc in documents:
+    print(doc)
+
+
 query = {"age": {"$gt": 25}}
-result = collection.delete_many(query)
-print("Deleted document count:", result.deleted_count)
+documents = collection.find(query).sort("name", pymongo.ASCENDING)
+
+for doc in documents:
+    print(doc)
