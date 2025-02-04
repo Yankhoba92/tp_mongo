@@ -11,3 +11,17 @@ documents = [
 ]
 result = collection.insert_many(documents)
 print("Inserted document IDs:", result.inserted_ids)
+
+query = {"name": "John Doe"}
+document = collection.find_one(query)
+print(document)
+query = {"age": {"$gt": 25}}
+documents = collection.find(query)
+
+for doc in documents:
+    print(doc)
+
+query = {"age": {"$gt": 25}}
+update = {"$inc": {"age": 1}}
+result = collection.update_many(query, update)
+print("Modified document count:", result.modified_count)
