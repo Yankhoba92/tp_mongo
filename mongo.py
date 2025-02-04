@@ -84,3 +84,14 @@ results = collection.aggregate(pipeline)
 
 for result in results:
     print(f"{result['_id']}: {result['total_balance']}")
+
+
+
+pipeline = [
+    {"$match": {"age": {"$gt": 25}}},
+    {"$group": {"_id": "$age", "count": {"$sum": 1}}}
+]
+results = collection.aggregate(pipeline)
+
+for result in results:
+    print(result)
