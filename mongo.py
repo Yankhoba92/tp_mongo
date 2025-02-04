@@ -1,6 +1,6 @@
 from pymongo import MongoClient
-import pymongo
 client = MongoClient('mongodb://localhost:27017/')
+import json
 
 
 db = client.mydb
@@ -43,8 +43,44 @@ for doc in documents:
     print(doc)
 
 
-query = {"age": {"$gt": 25}}
-documents = collection.find(query).sort("name", pymongo.ASCENDING)
+# query = {"age": {"$gt": 25}}
+# documents = collection.find(query).sort("name", pymongo.ASCENDING)
 
 for doc in documents:
     print(doc)
+
+with open("accounts.json", "r") as file:
+    for line in file:
+        try:
+            data = json.loads(line)  # Charger chaque ligne séparément
+            if "account_number" in data:  # Vérifier si c'est une donnée utile
+                collection.insert_one(data)
+        except json.JSONDecodeError:
+            print(f"Erreur lors du parsing de la ligne : {line}")
+
+print("Insertion terminée.")
+
+index_name = "city_index"
+collection.create_index("address.city", name=index_name)
+print("Index créé.")
+
+city = "Bradshawborough"
+results = collection.find({"address.city": city})
+min_balance = 30000
+for result in results:
+    print(result)
+
+results = collection.find({"balance": {"$gt": min_balance}})
+
+for result in results:
+    print(result)
+
+pipeline = [
+    {"$group": {"_id": "$address.city", "total_balance": {"$sum": "$balance"}}},
+    {"$sort": {"total_balance": -1}}
+]
+
+results = collection.aggregate(pipeline)
+
+for result in results:
+    print(f"{result['_id']}: {result['total_balance']}")
