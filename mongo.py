@@ -26,6 +26,6 @@ update = {"$inc": {"age": 1}}
 result = collection.update_many(query, update)
 print("Modified document count:", result.modified_count)
 
-query = {"name": "John Doe"}
-result = collection.delete_one(query)
+query = {"age": {"$gt": 25}}
+result = collection.delete_many(query)
 print("Deleted document count:", result.deleted_count)
